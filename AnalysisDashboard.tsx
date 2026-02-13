@@ -32,7 +32,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ onNewAnaly
   const resultsAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let interval: any;
+    let interval: ReturnType<typeof setInterval>;
     if (loading === LoadingState.ANALYZING) {
       setLoadingProgress(0);
       interval = setInterval(() => {
@@ -44,7 +44,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ onNewAnaly
         setLoadingProgress(prev => Math.min(prev + 3, 100));
       }, 40);
     }
-    return () => clearInterval(interval);
+    return () => { if (interval) clearInterval(interval); };
   }, [loading]);
 
   useEffect(() => {
@@ -54,12 +54,12 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ onNewAnaly
         if (stabilizingNodeId === node.node_id) return node;
         const decayFactor = node.status === 'CRITICAL' ? 0.12 : 0.04;
         const nextTime = Math.max(0, node.time_to_collapse - decayFactor);
-        let nextStatus = node.status;
+        let nextStatus: 'CRITICAL' | 'NOMINAL' | 'EMERGENCY' = node.status;
         if (nextTime < 25 && node.status === 'NOMINAL') {
           nextStatus = 'CRITICAL';
           addLog(`ALERT: PRCE_NODE ${node.node_id} INTEGRITY BREACHED`, 'critical');
         }
-        return { ...node, time_to_collapse: nextTime, status: nextStatus as any };
+        return { ...node, time_to_collapse: nextTime, status: nextStatus };
       }));
     }, 1000);
     return () => clearInterval(decayInterval);
@@ -112,7 +112,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ onNewAnaly
     setStabilizingNodeId(nodeId);
     addLog(`INJECTING STABILITY VECTOR TO ${nodeId}...`, 'warning');
     await new Promise(r => setTimeout(r, 1200));
-    setPrceNodes(prev => prev.map((n: PRCEStabilityNode) => n.node_id === nodeId ? { ...n, status: 'NOMINAL', time_to_collapse: 99.99 } : n ));
+    setPrceNodes(prev => prev.map((n: PRCEStabilityNode) => n.node_id === nodeId ? { ...n, status: 'NOMINAL' as const, time_to_collapse: 99.99 } : n ));
     addLog(`${nodeId} STABILIZED AT 100% INTEGRITY.`, 'success');
     setStabilizingNodeId(null);
   };
@@ -245,6 +245,13 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ onNewAnaly
                                  <span className={node.time_to_collapse < 30 ? 'text-red-500' : 'text-cyan-400'}>{node.time_to_collapse.toFixed(2)}%</span>
                               </div>
                            </div>
+                           <button 
+                             onClick={() => triggerStabilization(node.node_id)} 
+                             disabled={node.status === 'NOMINAL'} 
+                             className={`w-full py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest transition-all ${node.status !== 'NOMINAL' ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400' : 'bg-slate-900 text-slate-700 cursor-not-allowed'}`}
+                           >
+                             Stabilize
+                           </button>
                          </div>
                        ))}
                     </div>
