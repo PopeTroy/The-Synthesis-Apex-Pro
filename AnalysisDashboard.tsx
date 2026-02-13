@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LoadingState, HistoryItem, PRCEStabilityNode } from '../types.ts';
-import { analyzeTopic } from '../services/geminiService.ts';
-import { IntegrityChart } from './IntegrityChart.tsx';
-import { MetricCard } from './MetricCard.tsx';
-import { ParameterReference } from './ParameterReference.tsx';
-import { TheoryFramework } from './TheoryFramework.tsx';
-import { SynthesisCalendar } from './SynthesisCalendar.tsx';
+import { LoadingState, HistoryItem, PRCEStabilityNode } from '../types';
+import { analyzeTopic } from '../services/geminiService';
+import { IntegrityChart } from './IntegrityChart';
+import { MetricCard } from './MetricCard';
+import { ParameterReference } from './ParameterReference';
+import { TheoryFramework } from './TheoryFramework';
+import { SynthesisCalendar } from './SynthesisCalendar';
 
 interface AnalysisDashboardProps {
   onNewAnalysis: (item: HistoryItem) => void;
