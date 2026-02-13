@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AnalysisDashboard } from './components/AnalysisDashboard.tsx';
-import { LoadingState, HistoryItem } from './types.ts';
+import { AnalysisDashboard } from './components/AnalysisDashboard';
+import { LoadingState, HistoryItem } from './types';
 
 const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
