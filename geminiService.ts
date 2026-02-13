@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { SynthesisResponse } from "../types.ts";
+import { SynthesisResponse } from "../types";
 
 export const analyzeTopic = async (topic: string): Promise<SynthesisResponse> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -156,7 +156,7 @@ export const analyzeTopic = async (topic: string): Promise<SynthesisResponse> =>
     if (!text) {
       throw new Error("Synthesis_Service: Received empty response from core.");
     }
-    const parsed = JSON.parse(text) as SynthesisResponse;
+    const parsed = JSON.parse(text as string) as SynthesisResponse;
     return parsed;
   } catch (error) {
     console.error("Synthesis_Service: Diagnostic Error:", error);
