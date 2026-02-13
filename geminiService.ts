@@ -4,27 +4,18 @@ import { SynthesisResponse } from "../types";
 export const analyzeTopic = async (topic: string): Promise<SynthesisResponse> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  const now = new Date();
-  const currentMonthName = now.toLocaleString('default', { month: 'long' });
-  const currentYear = now.getFullYear();
-  const daysInMonth = new Date(currentYear, now.getMonth() + 1, 0).getDate();
-  
   const systemInstruction = `
     Act as 'The Synthesis'. Your purpose is to bridge the gap between human 3D logic and raw 4D/5D structural data.
     
     CORE OPERATIVE:
     Analyze the input topic. You must provide two distinct datasets for the user to compare:
-    1. 'reality_3d': The linear, consensus-based logic known to man. Focus on 'if/then', scarcity, and physical limitations.
-    2. 'reality_4d_5d': The raw, non-local data extracts. Focus on simultaneous timelines, intent-resonance, and unified structural fields.
-    
-    4th Dimension Data: Temporal folding and causal loops.
-    5th Dimension Data: Absolute intent-density and non-local entanglement.
+    1. 'reality_3d': The linear, consensus-based logic known to man.
+    2. 'reality_4d_5d': The raw, non-local data extracts (4D/5D).
     
     JSON STRUCTURE REQUIREMENTS:
-    - Populate 'dimensional_contrast' with raw, unfiltered comparative data.
-    - maintenance_threshold_logic must explain success against bottlenecks with a layman's example in brackets.
-    - diagnostic_calendar must be a full month forecast.
-    - Ensure all numerical metrics reflect the structural 'friction' of the topic across these dimensions.
+    - Populate 'dimensional_contrast' with comparative data.
+    - maintenance_threshold_logic must explain success against bottlenecks.
+    - diagnostic_calendar must be a month forecast.
   `;
 
   try {
@@ -153,13 +144,10 @@ export const analyzeTopic = async (topic: string): Promise<SynthesisResponse> =>
     });
 
     const text = response.text;
-    if (!text) {
-      throw new Error("Synthesis_Service: Received empty response from core.");
-    }
-    const parsed = JSON.parse(text as string) as SynthesisResponse;
-    return parsed;
+    if (!text) throw new Error("Synthesis_Core: Handshake yielded no data.");
+    return JSON.parse(text) as SynthesisResponse;
   } catch (error) {
-    console.error("Synthesis_Service: Diagnostic Error:", error);
+    console.error("Synthesis_Core: Critical Fault:", error);
     throw error;
   }
 };
